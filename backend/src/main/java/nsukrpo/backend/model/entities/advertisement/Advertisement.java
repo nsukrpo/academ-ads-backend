@@ -41,17 +41,20 @@ public class Advertisement {
     private User author;
 
     @NotNull
+    @Column(name = "\"publicationDate\"")
     private Timestamp publicationDate;
 
     @NotNull
+    @Column(name = "\"countWatch\"")
     private Integer countWatch;
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "status")
+    @JoinColumn(name = "\"status\"")
     private StatusAd status;
 
     @NotNull
+    @Column(name = "\"editDate\"")
     private Timestamp editDate;
 
 

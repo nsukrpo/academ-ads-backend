@@ -34,5 +34,6 @@ public class Block {
     private Integer time;
 
     @NotNull
+    @Column(name = "\"blockDate\"")
     private Timestamp blockDate;
 }

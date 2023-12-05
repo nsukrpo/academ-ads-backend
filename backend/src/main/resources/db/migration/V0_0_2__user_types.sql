@@ -1,0 +1,1 @@
+INSERT INTO "UserTypes" (type) VALUES ('ADMIN'), ('REGULAR'), ('MODER');
