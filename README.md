@@ -4,5 +4,6 @@
 2. Создать роль (если ее не будет): CREATE ROLE POSTGRES SUPERUSER LOGIN
 3. Создать БД: CREATE DATABASE mydb
 ## Запуск
-Через Maven.
-   
+Через Maven:
+1. mvn package
+2. java -jar target/<jar файл после сборки>
