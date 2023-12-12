@@ -28,6 +28,8 @@ CREATE TABLE "Users" (
                          "avatar" bigint,
                          "regDate" DATE NOT NULL,
                          "type" bigint NOT NULL,
+                         "login" varchar(100) NOT NULL UNIQUE,
+                         "password_hash" int NOT NULL,
                          CONSTRAINT "Users_pk" PRIMARY KEY ("id")
 ) WITH (
       OIDS=FALSE

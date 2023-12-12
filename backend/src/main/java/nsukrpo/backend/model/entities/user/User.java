@@ -7,6 +7,7 @@ import nsukrpo.backend.model.entities.advertisement.Category;
 import nsukrpo.backend.model.entities.moderation.Block;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +24,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private String name;
 
     @ToString.Exclude
@@ -36,9 +36,14 @@ public class User {
     @JoinColumn(name = "type")
     private UserType type;
 
-    @NotNull
     @Column(name = "\"regDate\"")
     private Date regDate;
+
+    @Column(name = "\"login\"")
+    private String login;
+
+    @Column(name = "\"password_hash\"")
+    private Integer passwordHash;
 
     @ToString.Exclude
     @ManyToMany(cascade = {
@@ -100,5 +105,16 @@ public class User {
             CascadeType.MERGE
     })
     private Set<Block> blocks;
+
+    //  performance bruh moment
+    public boolean isBlocked(){
+        var now = LocalDateTime.now();
+        for (var b : blocks){
+            if (b.getBlockDate().toLocalDateTime().plusMinutes(b.getTime()).isAfter(now)){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -3,6 +3,8 @@ package nsukrpo.backend.model.entities.advertisement;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import nsukrpo.backend.config.AdvCategory;
+import nsukrpo.backend.config.AdvStatus;
 import nsukrpo.backend.model.entities.user.User;
 
 import java.sql.Timestamp;
@@ -56,6 +58,10 @@ public class Advertisement {
     @NotNull
     @Column(name = "\"editDate\"")
     private Timestamp editDate;
+
+    public boolean isBooked(){
+        return AdvStatus.valueOf(status.getName()) == AdvStatus.BOOKED;
+    }
 
 
 }

@@ -1,3 +1,3 @@
 package nsukrpo.backend.config;
 
-public enum BlockStatus {ACTIVE, EXPIRED}
+public enum BlockStatus {ACTIVE, EXPIRED, ANY}
