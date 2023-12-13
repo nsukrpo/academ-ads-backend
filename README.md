@@ -5,5 +5,6 @@
 3. Создать БД: CREATE DATABASE mydb
 ## Запуск
 Через Maven:
-1. mvn package
-2. java -jar target/<jar файл после сборки>
+1. Запустить настроенную БД
+2. mvn package
+3. java -jar target/<jar файл после сборки>
