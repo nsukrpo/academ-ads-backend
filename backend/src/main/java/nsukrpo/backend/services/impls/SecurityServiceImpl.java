@@ -12,14 +12,27 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 @EnableWebSecurity
 public class SecurityServiceImpl {
 
+    private final boolean testRegime = true;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception{
+        if (testRegime)
+            return securityFilterChainTest(http);
+        return securityFilterChainReal(http);
+    }
+
+    private SecurityFilterChain securityFilterChainTest(final HttpSecurity http) throws Exception{
+        return http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll()).build();
+    }
+
+    private SecurityFilterChain securityFilterChainReal(final HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.GET, "/advertisement").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/advertisement/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/category").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/login").anonymous()
-                        .anyRequest().authenticated())
+                                .requestMatchers(HttpMethod.GET, "/advertisement").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/advertisement/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/category").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/login").anonymous()
+                                .anyRequest().authenticated()
+                        )
                 .exceptionHandling(entry ->
                         entry.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
                 .build();
