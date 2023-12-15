@@ -8,3 +8,7 @@
 1. Запустить настроенную БД
 2. mvn package
 3. java -jar target/<jar файл после сборки>
+
+
+Если Вы хотите запустить с использованием авторизации, то нужно в файле backend/src/main/java/nsukrpo/backend/services/impls/SecurityServiceImpl.java
+заменить значение переменной testRegime на false.
