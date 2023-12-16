@@ -1,7 +1,6 @@
 package nsukrpo.backend.model.entities.moderation;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import nsukrpo.backend.model.entities.user.User;
 
@@ -20,7 +19,7 @@ public class Strike {
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "\"user\"")
     private User user;
 
     @ToString.Exclude
