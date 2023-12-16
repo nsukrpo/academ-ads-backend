@@ -3,12 +3,14 @@ package nsukrpo.backend.model.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.NoArgsConstructor;
 import nsukrpo.backend.model.entities.moderation.Strike;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
 
 @Validated
+@NoArgsConstructor
 public class StrikeDto {
     @JsonProperty("id")
     private Long id;
