@@ -1,14 +1,14 @@
 package nsukrpo.backend.services.impls;
 
+import nsukrpo.backend.config.StrikeReason;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.dtos.StrikeDto;
 import nsukrpo.backend.model.dtos.StrikePostDto;
 import nsukrpo.backend.model.entities.moderation.Strike;
-import nsukrpo.backend.model.exceptions.NotFoundException;
-import nsukrpo.backend.repository.moderation.ReasonRep;
 import nsukrpo.backend.repository.moderation.StrikeRep;
 import nsukrpo.backend.services.StrikeService;
 import nsukrpo.backend.services.impls.utils.UserManager;
+import nsukrpo.backend.services.impls.utils.impls.StrikeManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,27 +19,27 @@ import java.util.Optional;
 @Service
 public class StrikeServiceImpl implements StrikeService {
     private final StrikeRep strikeRep;
-    private final ReasonRep reasonRep;
     private final UserManager userManager;
+    private final StrikeManagerImpl strikeManager;
 
     @Autowired
-    public StrikeServiceImpl(StrikeRep strikeRep, ReasonRep reasonRep, UserManager manager){
+    public StrikeServiceImpl(StrikeRep strikeRep, UserManager manager, StrikeManagerImpl strikeManager){
         this.strikeRep = strikeRep;
-        this.reasonRep = reasonRep;
         this.userManager = manager;
+        this.strikeManager = strikeManager;
     }
 
     @Override
     public StrikeDto getStrike(Long id) {
-        Strike strike = getStrikeOrThrow(id);
+        Strike strike = strikeManager.getStrikeOrThrow(id);
         return new StrikeDto(strike);
     }
 
     @Override
-    public IdDto putStrike(Long id, StrikeDto body) {
-        Strike strike = getStrikeOrThrow(id);
+    public IdDto putStrike(Long id, StrikeDto body) { //ещё не работает
+        Strike strike = strikeManager.getStrikeOrThrow(id);
         Optional.ofNullable(body.getUser()).map(userManager::getUserOrThrow).ifPresent(strike::setUser);
-        Optional.ofNullable(body.getReason()).map(reasonRep::findByName).ifPresent(strike::setReason);
+        Optional.ofNullable(body.getReason()).map(StrikeReason::valueOf).map(strikeManager::getReasonOrThrow).ifPresent(strike::setReason);
         strikeRep.save(strike);
         return new IdDto(strike.getId());
     }
@@ -58,7 +58,7 @@ public class StrikeServiceImpl implements StrikeService {
     public IdDto postStrike(StrikePostDto body) {
         Strike strike = Strike.builder()
                 .user(userManager.getUserOrThrow(body.getUserId()))
-                .reason(reasonRep.findByName(body.getReason()))
+                .reason(strikeManager.getReasonOrThrow(StrikeReason.valueOf(body.getReason())))
                 .build();
         strike = strikeRep.save(strike);
 
@@ -66,12 +66,8 @@ public class StrikeServiceImpl implements StrikeService {
         TODO
         Когда будет эндпоинт для блокировок, реализовать
          проверку достижения пользователем граничного числа предупреждений и, при необходимости,
-         вынесение перманентной блокировки
-         */
-        return new IdDto(strike.getId());
-    }
+         вынесение перманентной блокировки*/
 
-    private Strike getStrikeOrThrow(Long id){
-        return strikeRep.findById(id).orElseThrow(() -> new NotFoundException("Couldn't find strike: " + id));
+        return new IdDto(strike.getId());
     }
 }

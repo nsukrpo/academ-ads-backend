@@ -38,10 +38,9 @@ public class LoginServiceImpl implements LoginService, UserDetailsService {
     public TokenDto loginPost(LoginBodyDto body){
         UserDetails userDetails = loadUserByUsername(body.getLogin());
         int passwordHash = body.getPassword().hashCode();
-        Integer userPasswordHash = Integer.getInteger(userDetails.getPassword());
+        int userPasswordHash = Integer.parseInt(userDetails.getPassword());
         if (passwordHash == userPasswordHash){
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, passwordHash);
-            token.setAuthenticated(true);
+            var token = new UsernamePasswordAuthenticationToken(userDetails, passwordHash, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(token);
             return new TokenDto().token(token.hashCode());
         }
