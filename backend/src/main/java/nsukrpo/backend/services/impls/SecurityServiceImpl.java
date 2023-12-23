@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 @EnableWebSecurity
 public class SecurityServiceImpl {
 
-    private final boolean testRegime = true;
+    private final boolean testRegime = false;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception{

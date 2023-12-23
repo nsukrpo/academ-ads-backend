@@ -27,13 +27,15 @@ public class Booking {
     private User claimant;
 
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "ads")
     private Advertisement ads;
 
     @NotNull
+    @Column(name = "\"dateStart\"")
     private Timestamp dateStart;
 
     @NotNull
+    @Column(name = "\"dateUntil\"")
     private Timestamp dateUntil;
 }
