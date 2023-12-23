@@ -31,10 +31,9 @@ public class SecurityServiceImpl {
     private SecurityFilterChain securityFilterChainReal(final HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.GET, "/advertisement").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/advertisement/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/category").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/login").anonymous()
+                        .requestMatchers(HttpMethod.GET, "/advertisement", "/advertisement/**", "/category").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(entry ->

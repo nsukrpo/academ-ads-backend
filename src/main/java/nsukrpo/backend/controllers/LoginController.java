@@ -31,4 +31,10 @@ public class LoginController implements LoginApi {
         var res = service.loginPut(body);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<String> loginGet() {
+        String msg = "Покажите пользователю форму авторизации и затем сделайте POST-запрос на /login";
+        return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
 }
