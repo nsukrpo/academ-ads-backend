@@ -22,7 +22,7 @@ public class Block {
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "\"user\"")
     private User user;
 
     @ToString.Exclude

@@ -1,14 +1,17 @@
 package nsukrpo.backend.services.impls;
 
 import nsukrpo.backend.config.StrikeReason;
+import nsukrpo.backend.config.constants.SystemConstants;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.dtos.StrikeDto;
 import nsukrpo.backend.model.dtos.StrikePostDto;
 import nsukrpo.backend.model.entities.moderation.Strike;
+import nsukrpo.backend.model.entities.user.User;
 import nsukrpo.backend.repository.moderation.StrikeRep;
 import nsukrpo.backend.services.StrikeService;
+import nsukrpo.backend.services.impls.utils.BlockingManager;
+import nsukrpo.backend.services.impls.utils.StrikeManager;
 import nsukrpo.backend.services.impls.utils.UserManager;
-import nsukrpo.backend.services.impls.utils.impls.StrikeManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +22,16 @@ import java.util.Optional;
 @Service
 public class StrikeServiceImpl implements StrikeService {
     private final StrikeRep strikeRep;
+    private final StrikeManager strikeManager;
     private final UserManager userManager;
-    private final StrikeManagerImpl strikeManager;
+    private final BlockingManager blockingManager;
 
     @Autowired
-    public StrikeServiceImpl(StrikeRep strikeRep, UserManager manager, StrikeManagerImpl strikeManager){
+    public StrikeServiceImpl(StrikeRep strikeRep, StrikeManager strikeManager, UserManager manager, BlockingManager blockingManager){
         this.strikeRep = strikeRep;
-        this.userManager = manager;
         this.strikeManager = strikeManager;
+        this.userManager = manager;
+        this.blockingManager = blockingManager;
     }
 
     @Override
@@ -36,7 +41,7 @@ public class StrikeServiceImpl implements StrikeService {
     }
 
     @Override
-    public IdDto putStrike(Long id, StrikeDto body) { //ещё не работает
+    public IdDto putStrike(Long id, StrikeDto body) {
         Strike strike = strikeManager.getStrikeOrThrow(id);
         Optional.ofNullable(body.getUser()).map(userManager::getUserOrThrow).ifPresent(strike::setUser);
         Optional.ofNullable(body.getReason()).map(StrikeReason::valueOf).map(strikeManager::getReasonOrThrow).ifPresent(strike::setReason);
@@ -56,17 +61,15 @@ public class StrikeServiceImpl implements StrikeService {
 
     @Override
     public IdDto postStrike(StrikePostDto body) {
+        User user = userManager.getUserOrThrow(body.getUserId());
         Strike strike = Strike.builder()
-                .user(userManager.getUserOrThrow(body.getUserId()))
+                .user(user)
                 .reason(strikeManager.getReasonOrThrow(StrikeReason.valueOf(body.getReason())))
                 .build();
         strike = strikeRep.save(strike);
 
-        /*
-        TODO
-        Когда будет эндпоинт для блокировок, реализовать
-         проверку достижения пользователем граничного числа предупреждений и, при необходимости,
-         вынесение перманентной блокировки*/
+        if (getUserStrikes(body.getUserId()).size() >= SystemConstants.STRIKES_LIMIT)
+            blockingManager.getPermanentBlock(user);
 
         return new IdDto(strike.getId());
     }
