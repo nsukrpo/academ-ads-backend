@@ -62,7 +62,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     private Iterable<Advertisement> findByCategoryUseCase(Long category){
         Category cat = throw400IfThrow(advManager::getAdvCategoryOrThrow, category);
-        return advRep.findByCategoryIdAndStatusId(cat.getId(), advManager.getAdvStatusOrThrow(AdvStatus.SENT_MODERATION).getId());
+        return advRep.findByCategoryId(cat.getId());
     }
 
     @Override
