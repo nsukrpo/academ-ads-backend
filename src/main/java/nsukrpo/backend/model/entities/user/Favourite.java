@@ -23,7 +23,7 @@ public class Favourite {
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "\"user\"")
     private User user;
 
     @ToString.Exclude
@@ -32,5 +32,6 @@ public class Favourite {
     private Advertisement ads;
 
     @NotNull
+    @Column(name = "\"dateAdd\"")
     private Timestamp dateAdd;
 }
