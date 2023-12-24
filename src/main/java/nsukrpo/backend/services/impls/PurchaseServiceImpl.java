@@ -1,5 +1,6 @@
 package nsukrpo.backend.services.impls;
 
+import nsukrpo.backend.config.AdvStatus;
 import nsukrpo.backend.model.dtos.BookingDto;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.dtos.PurchaseDto;
@@ -17,6 +18,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -54,10 +56,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public IdDto purchasePost(PurchasePostBody body) {
         var purchase = modelMapper.map(body, Purchase.class);
-return null;
 
+        purchase.setSeller(userManager.getUserOrThrow(purchase.getSeller().getId()));
+        purchase.setBuyer(userManager.getUserOrThrow(purchase.getBuyer().getId()));
+        purchase.setAds(advManager.getAdvOrThrow(purchase.getAds().getId()));
+        purchase.setDate(new Timestamp(System.currentTimeMillis()));
 
+        purchase = purchaseRep.save(purchase);
+        purchase.getAds().setStatus(advManager.getAdvStatusOrThrow(AdvStatus.PURCHASED));
 
+        return new IdDto(purchase.getId());
     }
 }
 
