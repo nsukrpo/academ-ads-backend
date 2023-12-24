@@ -5,17 +5,32 @@
  */
 package nsukrpo.backend.services.impls;
 
+import nsukrpo.backend.model.dtos.AdvertisementDto;
 import nsukrpo.backend.model.dtos.PurchaseDto;
 import nsukrpo.backend.services.SalesService;
+import nsukrpo.backend.services.impls.utils.UserManager;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class SalesServiceImpl implements SalesService {
+
+    private UserManager userManager;
+    private ModelMapper mapper;
+    @Autowired
+    public SalesServiceImpl(UserManager userManager1, ModelMapper mapper1){
+        userManager = userManager1;
+        mapper = mapper1;
+    }
     @Override
     public List<PurchaseDto> salesGet(Long userId) {
-        return null;
+        var user = userManager.getUserOrThrow(userId);
+
+        return mapper.map(user.getSales(),new TypeToken<List<PurchaseDto>>() {}.getType());
     }
 }
 
