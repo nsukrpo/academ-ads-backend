@@ -50,19 +50,19 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     public List<AdvertisementDto> advertisementGet(Long category, Date date, Long countWatch) {
+        return modelMapper.
+                map(
+                        Optional.ofNullable(category)
+                                .map(this::findByCategoryUseCase)
+                                .orElseGet(advRep::findAll),
+                        new TypeToken<List<AdvertisementDto>>() {}.getType()
+                );
+
+    }
+
+    private Iterable<Advertisement> findByCategoryUseCase(Long category){
         Category cat = throw400IfThrow(advManager::getAdvCategoryOrThrow, category);
-
-        return modelMapper.map(
-                advRep.findByCategoryIdAndStatusId(cat.getId(), advManager.getAdvStatusOrThrow(AdvStatus.SENT_MODERATION).getId()),
-                /*
-                TODO
-                Когда модерация появится, нужно юзать это
-                advRep.findByCategoryIdAndStatusId(cat.getId(), advManager.getAdvStatusOrThrow(AdvStatus.ON_ADS_BOARD).getId()),
-
-                 */
-                new TypeToken<List<AdvertisementDto>>() {}.getType()
-        );
-
+        return advRep.findByCategoryIdAndStatusId(cat.getId(), advManager.getAdvStatusOrThrow(AdvStatus.SENT_MODERATION).getId());
     }
 
     @Override

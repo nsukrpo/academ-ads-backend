@@ -8,6 +8,7 @@ import java.util.List;
 public interface AdvRep extends CrudRepository<Advertisement, Long> {
     List<Advertisement> findByCategoryIdAndStatusId(Long category, Long status);
 
+    List<Advertisement> findAllByStatusId(Long status);
     void delete(Advertisement s);
 
 }
