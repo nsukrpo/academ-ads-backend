@@ -1,13 +1,16 @@
 package nsukrpo.backend.services.impls.utils.impls;
 
 import nsukrpo.backend.config.AdvStatus;
+import nsukrpo.backend.model.entities.advertisement.AdPhoto;
 import nsukrpo.backend.model.entities.advertisement.Advertisement;
 import nsukrpo.backend.model.entities.advertisement.Category;
 import nsukrpo.backend.model.entities.advertisement.StatusAd;
+import nsukrpo.backend.model.entities.user.UserAvatar;
 import nsukrpo.backend.model.exceptions.NotFoundException;
 import nsukrpo.backend.repository.advertsimenent.AdvCategoryRep;
 import nsukrpo.backend.repository.advertsimenent.AdvRep;
 import nsukrpo.backend.repository.advertsimenent.AdvStatusRep;
+import nsukrpo.backend.repository.advertsimenent.PhotoRep;
 import nsukrpo.backend.services.impls.utils.AdvManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,13 +28,18 @@ public class AdvManagerImpl implements AdvManager {
     private final EnumMap<nsukrpo.backend.config.AdvStatus, StatusAd> statuses = new EnumMap<>(nsukrpo.backend.config.AdvStatus.class);
     private final AdvCategoryRep categoryRep;
     private final AdvRep advRep;
+    private final PhotoRep photoRep;
     private final AdvStatusRep statusRep;
 
     @Autowired
-    public AdvManagerImpl(AdvCategoryRep categoryRep1,AdvRep advRep1, AdvStatusRep statusRep1){
+    public AdvManagerImpl(AdvCategoryRep categoryRep1,
+                          AdvRep advRep1,
+                          AdvStatusRep statusRep1,
+                          PhotoRep photoRep1){
         categoryRep = categoryRep1;
         advRep = advRep1;
         statusRep = statusRep1;
+        photoRep = photoRep1;
     }
 
     @Override
@@ -39,8 +47,13 @@ public class AdvManagerImpl implements AdvManager {
         return advRep.findById(id).orElseThrow(() -> new NotFoundException("Couldn't find adv: " + id));
     }
 
+    @Override
+    public AdPhoto getPhotoOrThrow(Long id){
+        return photoRep.findById(id).orElseThrow(() -> new NotFoundException("Couldn't find adv photo: " + id));
+    }
 
-    // не ну там явная дубликация надо переделывать нормально
+
+    // не ну у всех менеджеров явная дубликация надо переделывать нормально
     @Override
     public Category getAdvCategoryOrThrow(nsukrpo.backend.config.AdvCategory category){
         return categories.computeIfAbsent(category, t -> {

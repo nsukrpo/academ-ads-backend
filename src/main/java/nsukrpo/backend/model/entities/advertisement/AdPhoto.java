@@ -3,6 +3,8 @@ package nsukrpo.backend.model.entities.advertisement;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.type.descriptor.jdbc.BinaryJdbcType;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,5 +28,6 @@ public class AdPhoto {
     @ToString.Exclude
     @Lob
     @NotNull
+    @JdbcType(BinaryJdbcType.class)
     private byte[] photo;
 }

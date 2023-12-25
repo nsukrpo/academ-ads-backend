@@ -14,7 +14,7 @@ public interface MediaApi {
         
         
     @GetMapping(value = "/media/avatar/{id}", produces = { "application/json", "image/*" })
-    ResponseEntity<Resource> mediaAvatarIdGet(@PathVariable(value = "id", required = true) Long id);
+    ResponseEntity<byte[]> mediaAvatarIdGet(@PathVariable(value = "id", required = true) Long id);
 
 
         
@@ -29,7 +29,7 @@ public interface MediaApi {
         
     @GetMapping(value = "/media/photos/{id}",
         produces = { "image/*", "application/json" })
-    ResponseEntity<Resource> mediaPhotosIdGet(@PathVariable("id") Long id);
+    ResponseEntity<byte[]> mediaPhotosIdGet(@PathVariable("id") Long id);
 
 
         
