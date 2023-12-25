@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MediaServiceImpl implements MediaService {
 
@@ -60,10 +62,10 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     public IdDto mediaPhotosPost(Long adsId, byte[] body) {
-        var test1 = AdPhoto.builder().photo(body).advertisement(advManager.getAdvOrThrow(adsId)).build();
-        photoRep.save(test1);
+        var photo = photoRep.findById(adsId).orElseGet(() -> AdPhoto.builder().photo(body).advertisement(advManager.getAdvOrThrow(adsId)).build());
+        photo.setPhoto(body);
 
-        return new IdDto(adsId);
+        return new IdDto(photoRep.save(photo).getAds());
     }
 }
 
