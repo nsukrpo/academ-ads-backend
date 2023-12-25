@@ -21,7 +21,7 @@ public interface StrikeApi {
     ResponseEntity<IdDto> putStrike(@PathVariable("id") Long id, @Valid @RequestBody StrikeDto body);
 
     @GetMapping(produces = { "application/json" })
-    ResponseEntity<List<StrikeDto>> getUserStrikes(@Valid @RequestParam(value = "user_id") Long user_id);
+    ResponseEntity<List<StrikeDto>> getUserStrikes(@Valid @RequestParam(value = "user_id", required = false) Long userId);
 
     @PostMapping(produces = { "application/json" }, consumes = { "application/json" })
     ResponseEntity<IdDto> postStrike(@Valid @RequestBody StrikePostDto body);

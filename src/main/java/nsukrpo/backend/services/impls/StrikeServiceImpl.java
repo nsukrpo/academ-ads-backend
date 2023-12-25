@@ -2,9 +2,11 @@ package nsukrpo.backend.services.impls;
 
 import nsukrpo.backend.config.StrikeReason;
 import nsukrpo.backend.config.constants.SystemConstants;
+import nsukrpo.backend.model.dtos.BlockingDto;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.dtos.StrikeDto;
 import nsukrpo.backend.model.dtos.StrikePostDto;
+import nsukrpo.backend.model.entities.moderation.Block;
 import nsukrpo.backend.model.entities.moderation.Strike;
 import nsukrpo.backend.model.entities.user.User;
 import nsukrpo.backend.repository.moderation.StrikeRep;
@@ -50,12 +52,11 @@ public class StrikeServiceImpl implements StrikeService {
     }
 
     @Override
-    public List<StrikeDto> getUserStrikes(Long user_id) {
-        var strikes = strikeRep.findAll();
-        ArrayList<StrikeDto> userStrikes = new ArrayList<>();
-        for (var strike: strikes)
-            if (user_id.equals(strike.getUser().getId()))
-                userStrikes.add(new StrikeDto(strike));
+    public List<StrikeDto> getUserStrikes(Long userId) {
+        Iterable<Strike> userStrikesSet = Optional.ofNullable(userId).map(id -> (Iterable<Strike>) userManager.getUserOrThrow(id).getStrikes()).orElse(strikeRep.findAll());
+        List<StrikeDto> userStrikes = new ArrayList<>();
+        for (var strike: userStrikesSet)
+            userStrikes.add(new StrikeDto(strike));
         return userStrikes;
     }
 

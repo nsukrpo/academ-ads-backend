@@ -55,8 +55,8 @@ public class BlockingServiceImpl implements BlockingService {
     }
 
     @Override
-    public List<BlockingDto> getUserBlocking(Long user_id) {
-        Set<Block> userBlocksSet = userManager.getUserOrThrow(user_id).getBlocks();
+    public List<BlockingDto> getUserBlocking(Long userId) {
+        Iterable<Block> userBlocksSet = Optional.ofNullable(userId).map(id -> (Iterable<Block>) userManager.getUserOrThrow(id).getBlocks()).orElse(blockingRep.findAll());
         List<BlockingDto> userBlocks = new ArrayList<>();
         for (Block block: userBlocksSet)
             userBlocks.add(new BlockingDto(block));

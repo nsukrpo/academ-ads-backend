@@ -42,8 +42,8 @@ public class BlockingController implements BlockingApi {
     }
 
     @Override
-    public ResponseEntity<List<BlockingDto>> getUserBlocking(Long user_id) {
-        var res = service.getUserBlocking(user_id);
+    public ResponseEntity<List<BlockingDto>> getUserBlocking(Long userId) {
+        var res = service.getUserBlocking(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import nsukrpo.backend.model.entities.advertisement.Category;
 import nsukrpo.backend.model.entities.moderation.Block;
+import nsukrpo.backend.model.entities.moderation.Strike;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -105,7 +106,14 @@ public class User {
     })
     private Set<Block> blocks;
 
-    //  performance bruh moment
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user" , orphanRemoval = true, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    private Set<Strike> strikes;
+
+    // TODO performance bruh moment
     public boolean isBlocked(){
         var now = LocalDateTime.now();
         for (var b : blocks){

@@ -25,7 +25,7 @@ public interface BlockingApi {
     ResponseEntity<Void> deleteBlocking(@PathVariable("id") Long id);
 
     @GetMapping(produces = { "application/json" })
-    ResponseEntity<List<BlockingDto>> getUserBlocking(@Valid @RequestParam(value = "user_id") Long user_id);
+    ResponseEntity<List<BlockingDto>> getUserBlocking(@Valid @RequestParam(value = "user_id", required = false) Long userId);
 
     @PostMapping(produces = { "application/json" }, consumes = { "application/json" })
     ResponseEntity<IdDto> postBlocking(@Valid @RequestBody BlockingPostDto body);
