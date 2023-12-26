@@ -40,6 +40,11 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
+    public User getUserByLoginOrThrow(String login) {
+        return userRep.findByLogin(login).orElseThrow(() -> new NotFoundException("Couldn't find user: " + login));
+    }
+
+    @Override
     public UserType getUserTypeOrThrow(nsukrpo.backend.config.UserType type){
         return types.computeIfAbsent(type, t -> {
             synchronized (types){

@@ -3,7 +3,6 @@ package nsukrpo.backend.controllers;
 import nsukrpo.backend.controllers.api.LoginApi;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.dtos.LoginBodyDto;
-import nsukrpo.backend.model.dtos.TokenDto;
 import nsukrpo.backend.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +22,8 @@ public class LoginController implements LoginApi {
     }
 
     @Override
-    public ResponseEntity<TokenDto> loginPost(LoginBodyDto body) {
-        var res = service.loginPost(body);
+    public ResponseEntity<String> loginPost(LoginBodyDto body) {
+        String res = service.loginPost(body);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

@@ -7,5 +7,6 @@ import nsukrpo.backend.model.entities.user.UserType;
 public interface UserManager {
     UserType getUserTypeOrThrow(nsukrpo.backend.config.UserType type);
     User getUserOrThrow(Long id);
+    User getUserByLoginOrThrow(String login);
     UserAvatar getAvatarOrThrow(Long id);
 }
