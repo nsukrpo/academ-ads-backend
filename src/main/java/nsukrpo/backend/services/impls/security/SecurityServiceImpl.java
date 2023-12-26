@@ -28,7 +28,7 @@ import java.util.Set;
 @EnableWebSecurity
 public class SecurityServiceImpl {
 
-    private final boolean testRegime = true;
+    private final boolean testRegime = false;
     private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired

@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -49,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
         int passwordHash = body.getPassword().hashCode();
         int userPasswordHash = Integer.parseInt(userDetails.getPassword());
         if (passwordHash == userPasswordHash){
-            var jwt = JWT.create()
+            return JWT.create()
                     .withClaim("user_id", user.getId().toString())
                     .withClaim("role", user.getType().getType())
                     .withClaim("login", user.getLogin())
@@ -60,10 +61,9 @@ public class LoginServiceImpl implements LoginService {
 
                         @Override
                         public byte[] sign(byte[] bytes) throws SignatureGenerationException {
-                            return "Редиска".getBytes(StandardCharsets.UTF_8);
+                            return (String.valueOf(Arrays.hashCode(bytes)) + String.valueOf("редиска".hashCode())).getBytes();
                         }
                     });
-            return jwt;
         }
         throw new AuthenticationServiceException("Wrong login or password");
     }
