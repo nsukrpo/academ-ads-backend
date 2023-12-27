@@ -1,5 +1,6 @@
 package nsukrpo.backend.services.impls;
 
+import jakarta.persistence.Id;
 import nsukrpo.backend.model.dtos.AdvertisementDto;
 import nsukrpo.backend.model.dtos.FavoriteAdvertisementDto;
 import nsukrpo.backend.model.dtos.IdDto;
@@ -34,28 +35,33 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
-    public List<AdvertisementDto> getFavoriteAds(Long user_id) {
-        List<Favourite> favoriteRecords = favoriteRep.findByUserId(user_id);
+    public List<AdvertisementDto> getFavoriteAds(Long userId) {
+        List<Favourite> favoriteRecords = favoriteRep.findByUserId(userId);
         List<AdvertisementDto> res = new ArrayList<>();
-        for (var record: favoriteRecords)
-            res.add(modelMapper.map(record.getAds(), AdvertisementDto.class));
+        for (var rec: favoriteRecords)
+            res.add(modelMapper.map(rec.getAds(), AdvertisementDto.class));
         return res;
     }
 
     @Override
     public IdDto postFavoriteAds(FavoriteAdvertisementDto body) {
-        Favourite favourite = Favourite.builder()
-                .ads(advManager.getAdvOrThrow(body.getAdsId()))
-                .user(userManager.getUserOrThrow(body.getUserId()))
-                .dateAdd(new Timestamp(System.currentTimeMillis()))
-                .build();
-        favourite = favoriteRep.save(favourite);
-        return new IdDto(favourite.getId());
+        return favoriteRep.findByUserIdAndAdsId(body.getUserId(), body.getAdsId())
+                .map(v -> new IdDto(v.getId()))
+                .orElseGet( () -> {
+                    Favourite favourite = Favourite.builder()
+                            .ads(advManager.getAdvOrThrow(body.getAdsId()))
+                            .user(userManager.getUserOrThrow(body.getUserId()))
+                            .dateAdd(new Timestamp(System.currentTimeMillis()))
+                            .build();
+                    favourite = favoriteRep.save(favourite);
+                    return new IdDto(favourite.getId());
+                }
+        );
     }
 
     @Override
-    public HttpStatus deleteFavoriteAds(Long user_id, Long ads_id) {
-        Favourite favourite = favoriteRep.findByUserIdAndAdsId(user_id, ads_id).orElseThrow(() -> new NotFoundException("Couldn't find favorite"));
+    public HttpStatus deleteFavoriteAds(Long userId, Long adsId) {
+        Favourite favourite = favoriteRep.findByUserIdAndAdsId(userId, adsId).orElseThrow(() -> new NotFoundException("Couldn't find favorite"));
         favoriteRep.delete(favourite);
         return HttpStatus.OK;
     }
