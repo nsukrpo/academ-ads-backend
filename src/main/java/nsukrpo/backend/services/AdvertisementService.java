@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface AdvertisementService {
 
-    List<AdvertisementDto> advertisementGet(Long category,Date date, Long countWatch);
+    List<AdvertisementDto> advertisementGet(Long category,Date date, Long countWatch, String header);
 
     HttpStatus advertisementIdDelete(Long id);
 

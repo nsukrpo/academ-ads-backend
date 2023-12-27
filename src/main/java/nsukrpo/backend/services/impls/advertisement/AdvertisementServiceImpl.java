@@ -9,8 +9,10 @@ import nsukrpo.backend.model.dtos.AdvertisementPutBody;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.entities.advertisement.Advertisement;
 import nsukrpo.backend.model.entities.advertisement.Category;
+import nsukrpo.backend.model.entities.user.Purchase;
 import nsukrpo.backend.model.entities.user.User;
 import nsukrpo.backend.repository.advertsimenent.AdvRep;
+import nsukrpo.backend.repository.advertsimenent.PurchaseRep;
 import nsukrpo.backend.services.AdvertisementService;
 import nsukrpo.backend.services.impls.utils.AdvManager;
 import nsukrpo.backend.services.impls.utils.UserManager;
@@ -33,36 +35,51 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private final AdvRep advRep;
     private final AdvManager advManager;
     private final UserManager userManager;
+    private final PurchaseRep purchaseRep;
 
     @Autowired
     public AdvertisementServiceImpl(
             AdvRep advRep1,
             ModelMapper modelMapper1,
             AdvManager advManager1,
-            UserManager userManager1)
+            UserManager userManager1,
+            PurchaseRep purchaseRep)
     {
         advRep = advRep1;
         modelMapper = modelMapper1;
         advManager = advManager1;
         userManager = userManager1;
+        this.purchaseRep = purchaseRep;
     }
 
 
     @Override
-    public List<AdvertisementDto> advertisementGet(Long category, Date date, Long countWatch) {
-        return modelMapper.
-                map(
-                        Optional.ofNullable(category)
-                                .map(this::findByCategoryUseCase)
-                                .orElseGet(advRep::findAll),
-                        new TypeToken<List<AdvertisementDto>>() {}.getType()
-                );
+    public List<AdvertisementDto> advertisementGet(Long category, Date date, Long countWatch, String header) {
+        List<Advertisement> res;
+        if (null != category && null != header)
+        {
+            res = advRep.findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category, header);
+        }
+        else if (null != category)
+        {
+            res = advRep.findByCategoryIdOrderByPublicationDateDesc(category);
+        }
+        else if (null != header)
+        {
+            res = advRep.findByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(header);
+        }
+        else
+        {
+            res = advRep.findAllByOrderByPublicationDateDesc();
+        }
+
+        return modelMapper.map(res,new TypeToken<List<AdvertisementDto>>() {}.getType());
 
     }
 
     private Iterable<Advertisement> findByCategoryUseCase(Long category){
         Category cat = throw400IfThrow(advManager::getAdvCategoryOrThrow, category);
-        return advRep.findByCategoryId(cat.getId());
+        return advRep.findByCategoryIdOrderByPublicationDateDesc(cat.getId());
     }
 
     @Override
@@ -86,18 +103,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
         throw400IfBooked(adv);
 
-        /*
-//        Optional.ofNullable(body.getStatus()).map(AdvStatus::valueOf).map(advManager::getAdvStatusOrThrow).ifPresent(HANDLE);
-        TODO когда появятся авторизация
-        https://ai.nsu.ru/projects/forstudents/wiki/Data_Base
-        событие1:
-        UPDATE ON Advertisement SET status = "Снято с продажи"
-        событие2:
-
-
-         */
-
         adv.setEditDate(new Timestamp(System.currentTimeMillis()));
+        Optional.ofNullable(body.getStatus()).ifPresent(val -> handleStatusChange(body, adv));
         Optional.ofNullable(body.getCategory()).map(advManager::getAdvCategoryOrThrow).ifPresent(adv::setCategory);
         Optional.ofNullable(body.getDescription()).ifPresent(adv::setDescription);
         Optional.ofNullable(body.getHeader()).ifPresent(adv::setHeader);
@@ -109,7 +116,26 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     }
 
-    private void handleStatusChange(AdvertisementPutBody body, AdvStatus status){
+    private void handleStatusChange(AdvertisementPutBody body, Advertisement adv){
+        AdvStatus status = null;
+        try {
+            status = AdvStatus.valueOf(body.getStatus());
+        } catch (EnumConstantNotPresentException e){
+            throw new ValidationException("Invalid status");
+        }
+        switch (status){
+            case WITHDREW -> {
+                Purchase purchase = Purchase.builder()
+                        .price(body.getPrice())
+                        .ads(adv)
+                        .buyer(null)
+                        .seller(adv.getAuthor())
+                        .date(new Timestamp(System.currentTimeMillis()))
+                        .build();
+                purchaseRep.save(purchase);
+            }
+            default -> adv.setStatus(advManager.getAdvStatusOrThrow(status));
+        }
 
     }
 

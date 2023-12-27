@@ -6,11 +6,16 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface AdvRep extends CrudRepository<Advertisement, Long> {
-    List<Advertisement> findByCategoryIdAndStatusId(Long category, Long status);
+    List<Advertisement> findByCategoryIdAndStatusIdOrderByPublicationDateDesc(Long category, Long status);
 
-    List<Advertisement> findByCategoryId(Long category);
+    List<Advertisement> findByCategoryIdOrderByPublicationDateDesc(Long category);
 
-    List<Advertisement> findAllByStatusId(Long status);
+    List<Advertisement> findAllByStatusIdOrderByPublicationDate(Long status);
+
+    List<Advertisement> findAllByOrderByPublicationDateDesc();
+    List<Advertisement> findByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(String text);
+
+    List<Advertisement> findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(Long category, String text);
     void delete(Advertisement s);
 
 }

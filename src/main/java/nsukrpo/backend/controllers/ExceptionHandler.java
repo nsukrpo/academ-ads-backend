@@ -17,15 +17,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 @CrossOrigin(maxAge = 3000)
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request){
-        return new ResponseEntity<>(ExceptionDto.builder().code(400).message("Validation Failed").build(),HttpStatus.BAD_REQUEST);
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request){
-        return new ResponseEntity<>(ExceptionDto.builder().code(400).message("Validation Failed").build(),HttpStatus.BAD_REQUEST);
-    }
+//    @Override
+//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request){
+//        return new ResponseEntity<>(ExceptionDto.builder().code(400).message("Validation Failed").build(),HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @Override
+//    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request){
+//        return new ResponseEntity<>(ExceptionDto.builder().code(400).message("Validation Failed").build(),HttpStatus.BAD_REQUEST);
+//    }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({NotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(Exception e){

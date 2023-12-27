@@ -24,8 +24,8 @@ public class AdvertisementController implements AdvertisementApi {
     }
 
     @Override
-    public ResponseEntity<List<AdvertisementDto>> advertisementGet(Long category, Date date, Long countWatch) {
-        var res = service.advertisementGet(category,date,countWatch);
+    public ResponseEntity<List<AdvertisementDto>> advertisementGet(Long category, Date date, Long countWatch,String header) {
+        var res = service.advertisementGet(category,date,countWatch, header);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

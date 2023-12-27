@@ -21,7 +21,8 @@ public interface AdvertisementApi {
     ResponseEntity<List<AdvertisementDto>> advertisementGet(
             @Valid @RequestParam(value = "category", required = false) Long category,
             @Valid @RequestParam(value = "date", required = false) Date date,
-            @Valid @RequestParam(value = "countWatch", required = false) Long countWatch
+            @Valid @RequestParam(value = "countWatch", required = false) Long countWatch,
+            @Valid @RequestParam(value = "header", required = false) String header
 );
 
 
