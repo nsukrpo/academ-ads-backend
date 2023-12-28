@@ -72,6 +72,7 @@ public class SecurityServiceImpl {
                         .requestMatchers(HttpMethod.GET, "/advertisement", "/advertisement/**", "/category").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(entry ->
