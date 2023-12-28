@@ -21,7 +21,8 @@ public interface UserApi {
             @RequestParam(value = "reject_reason", required = false) StrikeReason rejectReason,
             @RequestParam(value = "published_ads", required = false) Long publishedAds,
             @RequestParam(value = "blockings", required = false) Integer blockings,
-            @RequestParam(value = "blocking_status", required = false) BlockStatus blockingStatus
+            @RequestParam(value = "blocking_status", required = false) BlockStatus blockingStatus,
+            @RequestParam(value = "page", required = false) Integer page
     );
 
     @GetMapping(value = "/{id}", produces = { "application/json" })

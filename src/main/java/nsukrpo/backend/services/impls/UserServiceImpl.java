@@ -13,6 +13,7 @@ import nsukrpo.backend.repository.user.UserTypeRep;
 import nsukrpo.backend.services.UserService;
 import nsukrpo.backend.services.impls.utils.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -32,16 +33,19 @@ public class UserServiceImpl implements UserService {
         userManager = userManager1;
     }
 
+    private final Integer PAGE_SIZE = 20;
     @Override
     public List<UserDto> getUserFiltered(
             Long rejectedAds,
             StrikeReason rejectReason,
             Long publishedAds,
             Integer blockings,
-            BlockStatus blockingStatus
+            BlockStatus blockingStatus,
+            Integer page
     ){
         ArrayList<UserDto> dtos = new ArrayList<>();
-        for (var u : userRep.findAll()){
+        int pg = Optional.ofNullable(page).orElse(0);
+        for (var u : userRep.findAll(PageRequest.of(pg, PAGE_SIZE))){
             dtos.add(new UserDto(u));
         }
         return dtos;

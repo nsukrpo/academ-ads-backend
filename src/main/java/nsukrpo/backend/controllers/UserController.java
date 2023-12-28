@@ -28,8 +28,8 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<UserDto>> getUserFiltered(Long rejectedAds, StrikeReason rejectReason, Long publishedAds, Integer blockings, BlockStatus blockingStatus) {
-        var res = userService.getUserFiltered(rejectedAds,rejectReason,publishedAds,blockings, blockingStatus);
+    public ResponseEntity<List<UserDto>> getUserFiltered(Long rejectedAds, StrikeReason rejectReason, Long publishedAds, Integer blockings, BlockStatus blockingStatus,Integer page) {
+        var res = userService.getUserFiltered(rejectedAds,rejectReason,publishedAds,blockings, blockingStatus,page);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

@@ -15,7 +15,8 @@ public interface UserService {
             StrikeReason rejectReason,
             Long publishedAds,
             Integer blockings,
-            BlockStatus blockingStatus
+            BlockStatus blockingStatus,
+            Integer page
     );
 
     UserDto userIdGet(Long id);
