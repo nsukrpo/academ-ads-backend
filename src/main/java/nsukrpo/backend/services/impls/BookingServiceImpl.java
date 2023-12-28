@@ -16,6 +16,7 @@ import nsukrpo.backend.services.impls.utils.UserManager;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -60,7 +61,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> bookingGet(Long userId) {
         userManager.getUserOrThrow(userId);
-
         return modelMapper.map(bookingRep.findBookingsByClaimantId(userId),new TypeToken<List<BookingDto>>() {}.getType());
     }
 
@@ -80,6 +80,18 @@ public class BookingServiceImpl implements BookingService {
         booking = bookingRep.save(booking);
 
         return new IdDto(booking.getId());
+
+    }
+
+    @Scheduled(fixedDelay = 10000, initialDelay = 10000)
+    private void bookingExpiration(){
+        var ads = advRep.findAllByStatusIdAndBookingsDateUntilBefore(advManager.getAdvStatusOrThrow(AdvStatus.BOOKED).getId(), new Timestamp(System.currentTimeMillis()));
+        var onBoard = advManager.getAdvStatusOrThrow(AdvStatus.ON_ADS_BOARD);
+        for (var ad : ads){
+            ad.setStatus(onBoard);
+            advRep.save(ad);
+        }
+//        advRep.saveAll(ads);
 
     }
 }

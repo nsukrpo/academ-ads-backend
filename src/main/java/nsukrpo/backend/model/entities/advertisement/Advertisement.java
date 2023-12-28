@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import nsukrpo.backend.config.AdvStatus;
+import nsukrpo.backend.model.entities.user.Message;
 import nsukrpo.backend.model.entities.user.User;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 
 @NoArgsConstructor
@@ -57,6 +59,12 @@ public class Advertisement {
     @NotNull
     @Column(name = "\"editDate\"")
     private Timestamp editDate;
+
+    @OneToMany(mappedBy = "ads" , orphanRemoval = true, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    private Set<Booking> bookings;
 
     public boolean isBooked(){
         return AdvStatus.valueOf(status.getName()) == AdvStatus.BOOKED;

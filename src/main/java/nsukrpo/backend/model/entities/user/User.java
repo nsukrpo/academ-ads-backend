@@ -51,6 +51,7 @@ public class User {
             CascadeType.MERGE
     })
     @JoinTable(name = "\"SubscriptionsUser\"",
+            schema = "academ",
             joinColumns = @JoinColumn(name = "\"userSubject\""),
             inverseJoinColumns = @JoinColumn(name = "\"userObject\"")
     )
@@ -66,6 +67,7 @@ public class User {
             CascadeType.MERGE
     })
     @JoinTable(name = "\"SubscriptionsCategory\"",
+            schema = "academ",
             joinColumns = @JoinColumn(name = "user"),
             inverseJoinColumns = @JoinColumn(name = "category")
     )

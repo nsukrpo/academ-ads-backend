@@ -4,6 +4,8 @@ import nsukrpo.backend.model.entities.advertisement.Advertisement;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,8 @@ public interface AdvRep extends PagingAndSortingRepository<Advertisement, Long> 
 
     List<Advertisement> findAllByStatusIdOrderByPublicationDate(Long status);
 
+    List<Advertisement> findAllByStatusIdAndBookingsDateUntilBefore(Long statusId,Timestamp beforeThatDate);
+
     List<Advertisement> findAllByOrderByPublicationDateDesc(Pageable pageable);
     List<Advertisement> findAllByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(String header, Pageable pageable);
 
@@ -22,5 +26,7 @@ public interface AdvRep extends PagingAndSortingRepository<Advertisement, Long> 
     Advertisement save(Advertisement s);
 
     Optional<Advertisement> findById(Long id);
+
+    Iterable<Advertisement> saveAll(Iterable<Advertisement> ss);
 
 }
