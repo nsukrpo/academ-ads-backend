@@ -6,6 +6,7 @@ import nsukrpo.backend.model.dtos.BookingDto;
 import nsukrpo.backend.model.dtos.BookingPostBody;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.entities.advertisement.Booking;
+import nsukrpo.backend.model.entities.advertisement.StatusAd;
 import nsukrpo.backend.repository.advertsimenent.AdvRep;
 import nsukrpo.backend.repository.advertsimenent.BookingRep;
 import nsukrpo.backend.services.BookingService;
@@ -49,7 +50,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void bookingDelete(Long bookingId) {
-        bookingRep.delete(bookingManager.getBookingOrThrow(bookingId));
+        var booking = bookingManager.getBookingOrThrow(bookingId);
+        var adv = booking.getAds();
+        adv.setStatus(advManager.getAdvStatusOrThrow(AdvStatus.ON_ADS_BOARD));
+        advRep.save(adv);
+        bookingRep.delete(booking);
     }
 
     @Override
