@@ -1,5 +1,6 @@
 package nsukrpo.backend.controllers;
 
+import jakarta.validation.Valid;
 import nsukrpo.backend.controllers.api.AdvertisementApi;
 import nsukrpo.backend.model.dtos.*;
 import nsukrpo.backend.services.AdvertisementService;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
@@ -24,8 +26,8 @@ public class AdvertisementController implements AdvertisementApi {
     }
 
     @Override
-    public ResponseEntity<List<AdvertisementDto>> advertisementGet(Long category, Date date, Long countWatch,String header) {
-        var res = service.advertisementGet(category,date,countWatch, header);
+    public ResponseEntity<List<AdvertisementDto>> advertisementGet(Long category, String header, Integer page) {
+        var res = service.advertisementGet(category,header, page);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 

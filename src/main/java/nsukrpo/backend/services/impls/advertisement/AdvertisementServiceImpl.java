@@ -8,7 +8,6 @@ import nsukrpo.backend.model.dtos.AdvertisementPostBody;
 import nsukrpo.backend.model.dtos.AdvertisementPutBody;
 import nsukrpo.backend.model.dtos.IdDto;
 import nsukrpo.backend.model.entities.advertisement.Advertisement;
-import nsukrpo.backend.model.entities.advertisement.Category;
 import nsukrpo.backend.model.entities.user.Purchase;
 import nsukrpo.backend.model.entities.user.User;
 import nsukrpo.backend.repository.advertsimenent.AdvRep;
@@ -19,10 +18,11 @@ import nsukrpo.backend.services.impls.utils.UserManager;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -53,33 +53,30 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
 
+    private final int PAGE_SIZE = 20;
     @Override
-    public List<AdvertisementDto> advertisementGet(Long category, Date date, Long countWatch, String header) {
+    public List<AdvertisementDto> advertisementGet(Long category, String header,Integer page) {
+        Pageable pg = Optional.ofNullable(page).map(page1 -> PageRequest.of(page1,PAGE_SIZE)).orElseGet(() -> PageRequest.of(0,PAGE_SIZE));
         List<Advertisement> res;
         if (null != category && null != header)
         {
-            res = advRep.findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category, header);
+            res = advRep.findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category, header,pg);
         }
         else if (null != category)
         {
-            res = advRep.findByCategoryIdOrderByPublicationDateDesc(category);
+            res = advRep.findAllByCategoryIdOrderByPublicationDateDesc(category,pg);
         }
         else if (null != header)
         {
-            res = advRep.findByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(header);
+            res = advRep.findAllByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(header,pg);
         }
         else
         {
-            res = advRep.findAllByOrderByPublicationDateDesc();
+            res = advRep.findAllByOrderByPublicationDateDesc(pg);
         }
 
         return modelMapper.map(res,new TypeToken<List<AdvertisementDto>>() {}.getType());
 
-    }
-
-    private Iterable<Advertisement> findByCategoryUseCase(Long category){
-        Category cat = throw400IfThrow(advManager::getAdvCategoryOrThrow, category);
-        return advRep.findByCategoryIdOrderByPublicationDateDesc(cat.getId());
     }
 
     @Override
