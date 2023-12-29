@@ -10,30 +10,18 @@ import org.springframework.web.bind.annotation.*;
 
 @Validated
 public interface MediaApi {
-
-        
-        
     @GetMapping(value = "/media/avatar/{id}", produces = { "application/json", "image/*" })
     ResponseEntity<byte[]> mediaAvatarIdGet(@PathVariable(value = "id", required = true) Long id);
 
-
-        
-        
     @PostMapping(value = "/media/avatar",
         produces = { "application/json" }, 
         consumes = { "image/*" })
     ResponseEntity<IdDto> mediaAvatarPost(@NotNull @Valid @RequestParam(value = "user_id") Long userId, @Valid @RequestBody byte[] body);
 
-
-        
-        
     @GetMapping(value = "/media/photos/{id}",
         produces = { "image/*", "application/json" })
     ResponseEntity<byte[]> mediaPhotosIdGet(@PathVariable("id") Long id);
 
-
-        
-        
     @PostMapping(value = "/media/photos",
         produces = { "application/json" }, 
         consumes = { "image/*" })

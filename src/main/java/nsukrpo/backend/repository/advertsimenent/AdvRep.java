@@ -9,12 +9,13 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
+// TODO ну тут нужно сортировку убрать в параметр и сделать спецификации
 public interface AdvRep extends PagingAndSortingRepository<Advertisement, Long> {
     List<Advertisement> findByCategoryIdAndStatusIdOrderByPublicationDateDesc(Long category, Long status);
 
     List<Advertisement> findAllByCategoryIdOrderByPublicationDateDesc(Long category, Pageable pageable);
 
-    List<Advertisement> findAllByStatusIdOrderByPublicationDate(Long status);
+    List<Advertisement> findAllByStatusIdOrderByPublicationDate(Long status, Pageable page);
 
     List<Advertisement> findAllByStatusIdAndBookingsDateUntilBefore(Long statusId,Timestamp beforeThatDate);
 
@@ -22,6 +23,11 @@ public interface AdvRep extends PagingAndSortingRepository<Advertisement, Long> 
     List<Advertisement> findAllByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(String header, Pageable pageable);
 
     List<Advertisement> findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(Long category, String text, Pageable pageable);
+
+
+    List<Advertisement> findByCategoryIdAndStatusIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(Long category, Long status, String text, Pageable pageable);
+    List<Advertisement> findAllByCategoryIdAndStatusIdOrderByPublicationDateDesc(Long category,Long status, Pageable pageable);
+    List<Advertisement> findAllByStatusIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(Long status,String header, Pageable pageable);
     void delete(Advertisement s);
     Advertisement save(Advertisement s);
 
