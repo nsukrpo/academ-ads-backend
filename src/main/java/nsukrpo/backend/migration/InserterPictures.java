@@ -17,9 +17,11 @@ public class InserterPictures {
     private final HttpClient client = HttpClient.newBuilder().build();;
     private final String path = "src/main/resources/assets/";
     private final String jpg = ".jpg";
+    private String token;
 
     @EventListener(ApplicationReadyEvent.class)
     public void insertPhotos() throws IOException, URISyntaxException, InterruptedException {
+        token = getAuthToken();
         insertPhoto("cow", 1L);
         insertPhoto("orange", 2L);
         insertPhoto("matanaliz", 3L);
@@ -32,7 +34,6 @@ public class InserterPictures {
     }
 
     private void insertPhoto(String photoName, Long ads) throws IOException, URISyntaxException, InterruptedException {
-        String token = getAuthToken();
         File file = new File(path + photoName + jpg);
         String req = String.format("http://localhost:8080/media/photos?ads_id=%s", ads);
         HttpRequest request = HttpRequest.newBuilder(new URI(req))
@@ -40,7 +41,7 @@ public class InserterPictures {
                 .header("Content-Type", "image/jpg")
                 .header("Authorization", token)
                 .build();
-        HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+        client.send(request, HttpResponse.BodyHandlers.discarding());
     }
 
     private String getAuthToken() throws URISyntaxException, IOException, InterruptedException {
