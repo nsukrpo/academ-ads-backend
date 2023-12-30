@@ -20,10 +20,12 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -56,47 +58,56 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private final int PAGE_SIZE = 20;
     @Override
     public List<AdvertisementDto> advertisementGet(Long category, String header,String status, Integer page) {
-        Pageable pg = Optional.ofNullable(page).map(page1 -> PageRequest.of(page1,PAGE_SIZE)).orElseGet(() -> PageRequest.of(0,PAGE_SIZE));
-        List<Advertisement> res;
-        if (null == status)
+        List<Advertisement> res = new ArrayList<>();
+        if (page != null && page == -1)
         {
-            if (null != category && null != header)
+            for(var ad : advRep.findAll(Sort.by("id")))
             {
-                res = advRep.findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category, header,pg);
+                res.add(ad);
             }
-            else if (null != category)
+        } else{
+            Pageable pg = Optional.ofNullable(page).map(page1 -> PageRequest.of(page1,PAGE_SIZE)).orElseGet(() -> PageRequest.of(0,PAGE_SIZE));
+            if (null == status)
             {
-                res = advRep.findAllByCategoryIdOrderByPublicationDateDesc(category,pg);
-            }
-            else if (null != header)
-            {
-                res = advRep.findAllByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(header,pg);
+                if (null != category && null != header)
+                {
+                    res = advRep.findByCategoryIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category, header,pg);
+                }
+                else if (null != category)
+                {
+                    res = advRep.findAllByCategoryIdOrderByPublicationDateDesc(category,pg);
+                }
+                else if (null != header)
+                {
+                    res = advRep.findAllByHeaderContainingIgnoreCaseOrderByPublicationDateDesc(header,pg);
+                }
+                else
+                {
+                    res = advRep.findAllByOrderByPublicationDateDesc(pg);
+                }
             }
             else
             {
-                res = advRep.findAllByOrderByPublicationDateDesc(pg);
+                Long st = advManager.getAdvStatusOrThrow(AdvStatus.valueOf(status)).getId();
+                if (null != category && null != header)
+                {
+                    res = advRep.findByCategoryIdAndStatusIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category,st, header,pg);
+                }
+                else if (null != category)
+                {
+                    res = advRep.findAllByCategoryIdAndStatusIdOrderByPublicationDateDesc(category,st,pg);
+                }
+                else if (null != header)
+                {
+                    res = advRep.findAllByStatusIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(st,header,pg);
+                }
+                else
+                {
+                    res = advRep.findAllByStatusIdOrderByPublicationDate(st,pg);
+                }
             }
         }
-        else
-        {
-            Long st = advManager.getAdvStatusOrThrow(AdvStatus.valueOf(status)).getId();
-            if (null != category && null != header)
-            {
-                res = advRep.findByCategoryIdAndStatusIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(category,st, header,pg);
-            }
-            else if (null != category)
-            {
-                res = advRep.findAllByCategoryIdAndStatusIdOrderByPublicationDateDesc(category,st,pg);
-            }
-            else if (null != header)
-            {
-                res = advRep.findAllByStatusIdAndHeaderContainingIgnoreCaseOrderByPublicationDateDesc(st,header,pg);
-            }
-            else
-            {
-                res = advRep.findAllByStatusIdOrderByPublicationDate(st,pg);
-            }
-        }
+
 
 
         return modelMapper.map(res,new TypeToken<List<AdvertisementDto>>() {}.getType());
