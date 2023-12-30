@@ -103,7 +103,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 }
                 else
                 {
-                    res = advRep.findAllByStatusIdOrderByPublicationDate(st,pg);
+                    res = advRep.findAllByStatusIdOrderByPublicationDateDesc(st,pg);
                 }
             }
         }
